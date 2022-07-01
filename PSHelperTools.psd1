@@ -3,7 +3,7 @@
 #
 # Generiert von: Kevin Holtkamp
 #
-# Generiert am: 01.05.2022
+# Generiert am: 01.07.2022
 #
 
 @{
@@ -12,7 +12,7 @@
 RootModule = 'PSHelperTools.psm1'
 
 # Die Versionsnummer dieses Moduls
-ModuleVersion = '0.0.1'
+ModuleVersion = '0.0.3'
 
 # Unterstützte PSEditions
 # CompatiblePSEditions = @()
@@ -69,7 +69,8 @@ Description = 'Useful tools'
 # NestedModules = @()
 
 # Aus diesem Modul zu exportierende Funktionen. Um optimale Leistung zu erzielen, verwenden Sie keine Platzhalter und löschen den Eintrag nicht. Verwenden Sie ein leeres Array, wenn keine zu exportierenden Funktionen vorhanden sind.
-FunctionsToExport = 'New-TestEnvironment'
+FunctionsToExport = 'New-TestEnvironment', 'Get-FTA', 'Get-PTA', 'Set-FTA', 'Set-PTA', 
+               'Register-FTA', 'Register-PTA'
 
 # Aus diesem Modul zu exportierende Cmdlets. Um optimale Leistung zu erzielen, verwenden Sie keine Platzhalter und löschen den Eintrag nicht. Verwenden Sie ein leeres Array, wenn keine zu exportierenden Cmdlets vorhanden sind.
 CmdletsToExport = @()
