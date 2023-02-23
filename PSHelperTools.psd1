@@ -3,7 +3,7 @@
 #
 # Generiert von: Kevin Holtkamp
 #
-# Generiert am: 01.07.2022
+# Generiert am: 02.07.2022
 #
 
 @{
@@ -12,7 +12,7 @@
 RootModule = 'PSHelperTools.psm1'
 
 # Die Versionsnummer dieses Moduls
-ModuleVersion = '0.0.3'
+ModuleVersion = '0.0.6'
 
 # Unterstützte PSEditions
 # CompatiblePSEditions = @()
@@ -24,13 +24,13 @@ GUID = 'e82871d2-e5b5-4a31-97ad-bd585cff0da0'
 Author = 'Kevin Holtkamp'
 
 # Unternehmen oder Hersteller dieses Moduls
-CompanyName = 'Unbekannt'
+CompanyName = ''
 
 # Urheberrechtserklärung für dieses Modul
-Copyright = '(c) Kevin. All rights reserved.'
+Copyright = '(c) Kevin Holtkamp 2022. All rights reserved.'
 
 # Beschreibung der von diesem Modul bereitgestellten Funktionen
-Description = 'Useful tools'
+Description = 'Useful tools for use in Powershell'
 
 # Die für dieses Modul mindestens erforderliche Version des Windows PowerShell-Moduls
 # PowerShellVersion = ''
@@ -69,8 +69,9 @@ Description = 'Useful tools'
 # NestedModules = @()
 
 # Aus diesem Modul zu exportierende Funktionen. Um optimale Leistung zu erzielen, verwenden Sie keine Platzhalter und löschen den Eintrag nicht. Verwenden Sie ein leeres Array, wenn keine zu exportierenden Funktionen vorhanden sind.
-FunctionsToExport = 'New-TestEnvironment', 'Get-FTA', 'Get-PTA', 'Set-FTA', 'Set-PTA', 
-               'Register-FTA', 'Register-PTA'
+FunctionsToExport = @('New-TestEnvironment', 'Get-FTA', 'Get-PTA', 'Set-FTA', 'Set-PTA',
+               'Register-FTA', 'Remove-FTA', "Test-Symlink", "Get-SymlinkTarget", "Join-StringCustom",
+                "Format-Path", "Resolve-Symlink", "Compare-Paths", "Read-ArrayInput")
 
 # Aus diesem Modul zu exportierende Cmdlets. Um optimale Leistung zu erzielen, verwenden Sie keine Platzhalter und löschen den Eintrag nicht. Verwenden Sie ein leeres Array, wenn keine zu exportierenden Cmdlets vorhanden sind.
 CmdletsToExport = @()
@@ -102,7 +103,7 @@ PrivateData = @{
         # LicenseUri = ''
 
         # A URL to the main website for this project.
-        # ProjectUri = ''
+         ProjectUri = 'https://github.com/kevinholtkamp/pshelpertools'
 
         # A URL to an icon representing this module.
         # IconUri = ''

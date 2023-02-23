@@ -1,11 +1,173 @@
 function New-TestEnvironment(){
-    Set-Location $env:temp
     $Folder = -join ((65..90) + (97..122) | Get-Random -Count 20 | % {[char]$_})
-    New-Item $Folder -ItemType Directory
-    Set-Location $Folder
+    New-Item "$($env:temp)\$Folder" -ItemType Directory | Out-Null
+    Push-Location "$($env:temp)\$Folder"
+}
+
+function Test-Symlink(){
+    [Cmdletbinding()]
+    param($Path)
+    if(Test-Path $Path){
+        ((Get-Item $Path).Attributes.ToString() -match "ReparsePoint")
+    }
+    else{
+        $False
+    }
+}
+function Get-SymlinkTarget(){
+    [Cmdletbinding()]
+    param($Path)
+    if(Test-Symlink $Path){
+        try{
+            ((Get-Item $Path | Select-Object -ExpandProperty Target) -replace "^UNC\\", "\\")
+        }
+        catch{
+            ""
+        }
+    }
+    else{
+        ""
+    }
+}
+function Join-StringCustom{
+    param(
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        [String[]]
+        $Strings,
+        [String]
+        $Separator
+    )
+    Begin{
+        $Array = [System.Collections.ArrayList]@()
+    }
+    Process{
+        $Array.Add($Strings[0]) | Out-Null
+    }
+    End{
+        $Return = ""
+        for($i = 0; $i -lt $Array.Count - 1; $i = $i + 1){
+            $Return = -join($Return, $Array[$i], $Separator)
+        }
+        $Return = -join($Return, $Array[$Array.Count - 1])
+        $Return
+    }
+}
+#Which Verb? Format? Optimize? Convert? Resolve? Unify is unapproved but fitting
+function Format-Path(){
+    [Cmdletbinding()]
+    param($Path)
+
+    Write-Verbose "Format-Path: $Path"
+    if($Path.StartsWith(".")){
+        #Get Absolute path if path starts with "."
+        $Path = Resolve-Path -Path $Path
+        Write-Verbose "Resolved Path: $Path"
+    }
+    if($Path -match "^.*::(.*)"){
+        $Path = $Path -replace "^.*::(.*)", '$1'
+        Write-Verbose "Replaced Powershell providers: $Path"
+    }
+    $Path = $Path -replace "/"                      , "\" `
+                  -replace "^\\\\\.\\"              , "" `
+                  -replace "^\\\\\?\\"              , "" `
+                  -replace "^UNC\\"                 , "\\"
+    Write-Verbose "Replaced UNC conventions: $Path"
+
+    if($Path -match "^\\\\([A-Za-z]+)(@SSL)?"){
+        $Path = $Path -replace "^\\\\([A-Za-z]+)(@SSL)?", "\\$((Resolve-DnsName $matches[1] -Type "A").IPAddress)"
+        Write-Verbose "Resolve name into IP: $Path"
+    }
+
+    return $Path.TrimEnd("\")
+}
+function Resolve-Symlink(){
+    [Cmdletbinding()]
+    param($Path)
+
+    Write-Verbose "Resolve-Symlink: $Path"
+    $Path = Format-Path $Path
+    Write-Verbose "Formatted: $Path"
+    $Current = $Path
+    while($Current){
+        Write-Verbose "Current step: $Current"
+        if(Test-Symlink $Current){
+            $Target = Get-SymlinkTarget $Current
+            Write-Verbose "Step is Symlink, replacing with target: $Target"
+            $Path = $Path -replace "^$([System.Text.RegularExpressions.Regex]::Escape($Current))", "$Target"
+            $Current = $Target
+        }
+        else{
+            $Current = Split-Path -Path $Current -Parent -ErrorAction Stop
+        }
+    }
+    Write-Verbose "Resolved Symlink: $Path"
+    return Format-Path $Path
+}
+function Compare-Paths(){
+    [Cmdletbinding()]
+    param([String]$First, [String]$Second)
+
+    Write-Verbose "Comparing-Paths: '$First' to '$Second'"
+    return (Resolve-Symlink $First -ErrorAction Stop) -eq (Resolve-Symlink $Second -ErrorAction Stop)
+}
+function Read-ArrayInput{
+    <#
+    .SYNOPSIS
+    Reads multiple inputs from the user and returns them as array
+    .DESCRIPTION
+    Reads multiple inputs from the user and returns them as array
+    .PARAMETER Item
+    The name of what you want the user to input
+    .PARAMETER Color
+    Optional parameter, the prompt will be in this color
+    .PARAMETER An
+    If your item starts with a vowel or a silent consonant
+    .INPUTS
+    This function does not take any pipeline input
+    .OUTPUTS
+    An array with the users inputs
+    .EXAMPLE
+    PS> Read-ArrayInput "Path"
+    PS> Enter a Path, just press enter to exit:
+    PS> Another one:
+    .EXAMPLE
+    PS> Read-ArrayInput "Address" -An
+    PS> Enter an Address, just press enter to exit:
+    PS> Another one or enter to exit:
+    .NOTES
+    Name: Read-ArrayInput
+    Author: Kevin Holtkamp, kevinholtkamp26@gmail.com
+    LastEdit: 09.07.2022
+  #>
+    param(
+        [Parameter(Position = 0, Mandatory)]
+        [String] $Item,
+
+        [Parameter(Position = 1)]
+        [ConsoleColor] $Color,
+
+        [Parameter(Position = 2)]
+        [Switch] $An
+    )
+    if($An){
+        $N = "n"
+    }
+    $Return = [System.Collections.ArrayList]@()
+    Write-Host "Enter a$N $Item, just press enter to exit: " -ForegroundColor $Color -NoNewline
+    $Input = Read-Host
+    while($Input -ne ""){
+        $Return.Add($Input) | Out-Null
+        Write-Host "Another one or enter to exit: " -ForegroundColor $Color -NoNewline
+        $Input = Read-Host
+    }
+    $Return
 }
 
 
+
+
+
+#https://github.com/DanysysTeam/PS-SFTA
 <#
 .SYNOPSIS
     Set File Type Association Windows 8/10/11
