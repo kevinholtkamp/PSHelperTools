@@ -12,7 +12,7 @@
 RootModule = 'PSHelperTools.psm1'
 
 # Die Versionsnummer dieses Moduls
-ModuleVersion = '0.0.6'
+ModuleVersion = '0.0.8'
 
 # Unterstützte PSEditions
 # CompatiblePSEditions = @()
@@ -71,7 +71,7 @@ Description = 'Useful tools for use in Powershell'
 # Aus diesem Modul zu exportierende Funktionen. Um optimale Leistung zu erzielen, verwenden Sie keine Platzhalter und löschen den Eintrag nicht. Verwenden Sie ein leeres Array, wenn keine zu exportierenden Funktionen vorhanden sind.
 FunctionsToExport = @('New-TestEnvironment', 'Get-FTA', 'Get-PTA', 'Set-FTA', 'Set-PTA',
                'Register-FTA', 'Remove-FTA', "Test-Symlink", "Get-SymlinkTarget", "Join-StringCustom",
-                "Format-Path", "Resolve-Symlink", "Compare-Paths", "Read-ArrayInput")
+                "Format-Path", "Resolve-Symlink", "Compare-Paths", "Read-ArrayInput", "PromptYesNo")
 
 # Aus diesem Modul zu exportierende Cmdlets. Um optimale Leistung zu erzielen, verwenden Sie keine Platzhalter und löschen den Eintrag nicht. Verwenden Sie ein leeres Array, wenn keine zu exportierenden Cmdlets vorhanden sind.
 CmdletsToExport = @()

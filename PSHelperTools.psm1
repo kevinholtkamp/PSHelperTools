@@ -110,6 +110,21 @@ function Compare-Paths(){
     Write-Verbose "Comparing-Paths: '$First' to '$Second'"
     return (Resolve-Symlink $First -ErrorAction Stop) -eq (Resolve-Symlink $Second -ErrorAction Stop)
 }
+function PromptYesNo($Prompt){
+#    Write-Host "$Prompt (yes/no): " -ForegroundColor Blue -NoNewline
+#    while($true){
+#        $Answer = Read-Host
+#        $Answer = $Answer.ToLower()
+#        if($Answer -eq "yes" -or $Answer -eq "y"){
+#            return $true
+#        }
+#        elseif ($Answer -eq "no" -or $Answer -eq "n"){
+#            return $false
+#        }
+#        Write-Host "Please enter a valid answer: " -ForegroundColor Red -NoNewline
+#    }
+    return 0 -eq ($Host.UI.PromptForChoice($Prompt, "", @("Yes", "No"), 1))
+}
 function Read-ArrayInput{
     <#
     .SYNOPSIS
